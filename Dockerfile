@@ -4,16 +4,16 @@ EXPOSE 80
 
 FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
 WORKDIR /src
-COPY ["InventoryService.csproj", "./"]
-RUN dotnet restore "InventoryService.csproj"
+COPY ["inventory-api.csproj", "./"]
+RUN dotnet restore "inventory-api.csproj"
 COPY . .
 WORKDIR "/src/"
-RUN dotnet build "InventoryService.csproj" -c Release -o /app/build
+RUN dotnet build "inventory-api.csproj" -c Release -o /app/build
 
 FROM build AS publish
-RUN dotnet publish "InventoryService.csproj" -c Release -o /app/publish
+RUN dotnet publish "inventory-api.csproj" -c Release -o /app/publish
 
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
-ENTRYPOINT ["dotnet", "InventoryService.dll"]
+ENTRYPOINT ["dotnet", "inventory-api.dll"]

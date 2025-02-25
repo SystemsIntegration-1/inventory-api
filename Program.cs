@@ -1,37 +1,48 @@
-using System;
-using System.Collections.Generic;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using InventoryApi.DBContext;
+using InventoryApi.Repositories;
+using InventoryApi.Repositories.Interfaces;
+using InventoryApi.Services.Interfaces;
+using InventoryApi.Services;
+using InventoryApi.Config;
 
 var builder = WebApplication.CreateBuilder(args);
 
-// Add services to the container
+builder.Services.AddDbContext<ProductDbContext>(options =>
+    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
+);
+
 builder.Services.AddDbContext<InventoryDbContext>(options =>
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection"))
 );
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
-builder.Services.AddScoped<IInventoryService, WareHouseService>();
+builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
+
+builder.Services.AddScoped<IProductService, ProductService>();
+builder.Services.AddScoped<IInventoryService, InventoryService>();
+
+builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
+
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-// Add CORS policy
 builder.Services.AddCors(options =>
 {
     options.AddPolicy(
         "AllowLocalhost5173",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader();
+            policy.WithOrigins("http://localhost:5173")
+                  .AllowAnyMethod()
+                  .AllowAnyHeader();
         }
     );
 });
 
 var app = builder.Build();
 
-// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
