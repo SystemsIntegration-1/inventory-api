@@ -1,4 +1,5 @@
 namespace InventoryApi.Entities;
+
 public class InventoryMovement
 {
     public Guid Id { get; set; }

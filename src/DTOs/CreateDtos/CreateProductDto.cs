@@ -1,4 +1,5 @@
 namespace InventoryApi.Dto;
+
 public class CreateProductDto
 {
     public required string Name { get; set; }
