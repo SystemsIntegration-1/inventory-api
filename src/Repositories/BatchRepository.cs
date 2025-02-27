@@ -32,4 +32,24 @@ public class BatchRepository : IBatchRepository
         _context.Batches.Update(batch);
         await _context.SaveChangesAsync();
     }
+
+    public async Task<IEnumerable<Batch>> GetExpiredBatchesAsync()
+    {
+        var currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        return await _context.Batches
+            .Where(b => b.ExpirationDate < currentTime && b.Stock > 0)
+            .ToListAsync();
+    }
+
+    public async Task ClearExpiredBatchesAsync()
+    {
+        var currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+        var expiredBatches = await _context.Batches
+        .Where(b => b.ExpirationDate < currentTime && b.Stock > 0)
+        .ToListAsync();
+
+        _context.Batches.RemoveRange(expiredBatches);
+        await _context.SaveChangesAsync();
+    }
 }

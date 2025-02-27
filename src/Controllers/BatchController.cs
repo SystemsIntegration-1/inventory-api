@@ -44,4 +44,18 @@ public class BatchController : ControllerBase
         await _batchService.UpdateBatchAsync(id, batchDto);
         return NoContent();
     }
+
+    [HttpGet("expired")]
+    public async Task<IActionResult> GetExpiredBatches()
+    {
+        var expiredBatches = await _batchService.GetExpiredBatchesAsync();
+        return Ok(expiredBatches);
+    }
+
+    [HttpPost("clear-expired")]
+    public async Task<IActionResult> ClearExpiredBatches()
+    {
+        await _batchService.ClearExpiredBatchesAsync();
+        return Ok(new { message = "Expired batches cleared successfully" });
+    }
 }

@@ -35,4 +35,15 @@ public class BatchService(IBatchRepository batchRepository, IMapper mapper) : IB
         _mapper.Map(batchDto, existingBatch);
         await _batchRepository.UpdateAsync(existingBatch);
     }
+
+    public async Task<IEnumerable<BatchDto>> GetExpiredBatchesAsync()
+    {
+        var expiredBatches = await _batchRepository.GetExpiredBatchesAsync();
+        return _mapper.Map<IEnumerable<BatchDto>>(expiredBatches);
+    }
+
+    public async Task ClearExpiredBatchesAsync()
+    {
+        await _batchRepository.ClearExpiredBatchesAsync();
+    }
 }

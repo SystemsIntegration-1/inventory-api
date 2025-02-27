@@ -8,4 +8,6 @@ public interface IBatchService
     Task<IEnumerable<BatchDto>> GetBatchesByProductIdAsync(Guid productId);
     Task AddBatchAsync(CreateBatchDto batchDto);
     Task UpdateBatchAsync(Guid id, BatchDto batchDto);
+    Task<IEnumerable<BatchDto>> GetExpiredBatchesAsync();
+    Task ClearExpiredBatchesAsync();
 }
