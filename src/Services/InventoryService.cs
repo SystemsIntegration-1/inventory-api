@@ -5,6 +5,7 @@ using InventoryApi.Repositories.Interfaces;
 using InventoryApi.Services.Interfaces;
 
 namespace InventoryApi.Services;
+
 public class InventoryService : IInventoryService
 {
     private readonly IInventoryRepository _repository;
@@ -31,7 +32,9 @@ public class InventoryService : IInventoryService
         await _repository.AddAsync(movement);
     }
 
-    public async Task<IEnumerable<InventoryMovementDto>> GetMovementsByProductIdAsync(Guid productId)
+    public async Task<IEnumerable<InventoryMovementDto>> GetMovementsByProductIdAsync(
+        Guid productId
+    )
     {
         var movements = await _repository.GetMovementsByProductIdAsync(productId);
         return _mapper.Map<IEnumerable<InventoryMovementDto>>(movements);

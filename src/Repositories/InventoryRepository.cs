@@ -2,7 +2,9 @@ using InventoryApi.DBContext;
 using InventoryApi.Entities;
 using InventoryApi.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
+
 namespace InventoryApi.Repositories;
+
 public class InventoryRepository : IInventoryRepository
 {
     private readonly InventoryDbContext _context;
@@ -30,6 +32,8 @@ public class InventoryRepository : IInventoryRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<InventoryMovement>> GetMovementsByProductIdAsync(Guid productId) =>
-        await _context.InventoryMovements.Where(m => m.ProductId == productId).ToListAsync();
+    public async Task<IEnumerable<InventoryMovement>> GetMovementsByProductIdAsync(Guid productId)
+    {
+        return await _context.InventoryMovements.Where(m => m.ProductId == productId).ToListAsync();
+    }
 }
