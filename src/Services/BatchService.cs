@@ -1,4 +1,5 @@
 using AutoMapper;
+using inventory_api.src.DTOs;
 using InventoryApi.Dto;
 using InventoryApi.Entities;
 using InventoryApi.Repositories.Interfaces;
@@ -36,10 +37,22 @@ public class BatchService(IBatchRepository batchRepository, IMapper mapper) : IB
         await _batchRepository.UpdateAsync(existingBatch);
     }
 
-    public async Task<IEnumerable<BatchDto>> GetExpiredBatchesAsync()
+    public async Task<IEnumerable<ExpiredBatchDto>> GetExpiredBatchesAsync()
     {
-        var expiredBatches = await _batchRepository.GetExpiredBatchesAsync();
-        return _mapper.Map<IEnumerable<BatchDto>>(expiredBatches);
+        var expiredBatchesWithProduct = await _batchRepository.GetExpiredBatchesAsync();
+
+        var expiredBatchDtos = expiredBatchesWithProduct.Select(bp => new ExpiredBatchDto
+        {
+            BatchId = bp.Item1.Id,
+            ProductId = bp.Item1.ProductId,
+            ProductName = bp.Item2.Name,
+            ProductCategory = bp.Item2.Category,
+            Stock = bp.Item1.Stock,
+            EntryDate = bp.Item1.EntryDate,
+            ExpirationDate = bp.Item1.ExpirationDate
+        }).ToList();
+
+        return expiredBatchDtos;
     }
 
     public async Task ClearExpiredBatchesAsync()

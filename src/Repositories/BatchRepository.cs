@@ -33,12 +33,26 @@ public class BatchRepository : IBatchRepository
         await _context.SaveChangesAsync();
     }
 
-    public async Task<IEnumerable<Batch>> GetExpiredBatchesAsync()
+    public async Task<IEnumerable<(Batch, Product)>> GetExpiredBatchesAsync()
     {
         var currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        return await _context.Batches
+
+        var expiredBatches = await _context.Batches
             .Where(b => b.ExpirationDate < currentTime && b.Stock > 0)
             .ToListAsync();
+
+        var result = new List<(Batch, Product)>();
+
+        foreach (var batch in expiredBatches)
+        {
+            var product = await _context.Products.FindAsync(batch.ProductId);
+            if (product != null)
+            {
+                result.Add((batch, product));
+            }
+        }
+
+        return result;
     }
 
     public async Task ClearExpiredBatchesAsync()
