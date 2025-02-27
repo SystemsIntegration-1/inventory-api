@@ -1,10 +1,10 @@
-using Microsoft.EntityFrameworkCore;
+using InventoryApi.Config;
 using InventoryApi.DBContext;
 using InventoryApi.Repositories;
 using InventoryApi.Repositories.Interfaces;
-using InventoryApi.Services.Interfaces;
 using InventoryApi.Services;
-using InventoryApi.Config;
+using InventoryApi.Services.Interfaces;
+using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -18,9 +18,11 @@ builder.Services.AddDbContext<InventoryDbContext>(options =>
 
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
+builder.Services.AddScoped<IBatchRepository, BatchRepository>();
 
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();
+builder.Services.AddScoped<IBatchService, BatchService>();
 
 builder.Services.AddAutoMapper(typeof(AutoMapperProfile));
 
@@ -34,9 +36,7 @@ builder.Services.AddCors(options =>
         "AllowLocalhost5173",
         policy =>
         {
-            policy.WithOrigins("http://localhost:5173")
-                  .AllowAnyMethod()
-                  .AllowAnyHeader();
+            policy.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader();
         }
     );
 });

@@ -9,7 +9,7 @@ public class AutoMapperProfile : Profile
     public AutoMapperProfile()
     {
         CreateMap<CreateProductDto, Product>().ReverseMap();
-        CreateMap<BatchDto, Batch>().ReverseMap();
+        CreateMap<CreateBatchDto, Batch>().ReverseMap();
         CreateMap<Batch, BatchDto>().ReverseMap();
         CreateMap<Product, ProductDto>().ReverseMap();
         CreateMap<InventoryMovement, InventoryMovementDto>().ReverseMap();

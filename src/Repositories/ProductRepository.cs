@@ -4,6 +4,7 @@ using InventoryApi.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 namespace InventoryApi.Repositories;
+
 public class ProductRepository : IProductRepository
 {
     private readonly ProductDbContext _context;
@@ -13,11 +14,9 @@ public class ProductRepository : IProductRepository
         _context = context;
     }
 
-    public async Task<IEnumerable<Product>> GetAllAsync() =>
-        await _context.Products.ToListAsync();
+    public async Task<IEnumerable<Product>> GetAllAsync() => await _context.Products.ToListAsync();
 
-    public async Task<Product?> GetByIdAsync(Guid id) =>
-        await _context.Products.FindAsync(id);
+    public async Task<Product?> GetByIdAsync(Guid id) => await _context.Products.FindAsync(id);
 
     public async Task AddAsync(Product product)
     {
@@ -32,7 +31,18 @@ public class ProductRepository : IProductRepository
     }
 
     public async Task<IEnumerable<Product>> SearchProductsAsync(string name) =>
-        await _context.Products
-            .Where(p => EF.Functions.Like(p.Name.ToLower(), $"%{name.ToLower()}%"))
+        await _context
+            .Products.Where(p => EF.Functions.Like(p.Name.ToLower(), $"%{name.ToLower()}%"))
             .ToListAsync();
+
+    public async Task AddBatchAsync(Batch batch)
+    {
+        _context.Batches.Add(batch);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<Product?> GetByIdWithBatchesAsync(Guid id)
+    {
+        return await _context.Products.Include(p => p.Batches).FirstOrDefaultAsync(p => p.Id == id);
+    }
 }

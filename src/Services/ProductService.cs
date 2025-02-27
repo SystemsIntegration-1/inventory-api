@@ -3,6 +3,7 @@ using InventoryApi.Dto;
 using InventoryApi.Entities;
 using InventoryApi.Repositories.Interfaces;
 using InventoryApi.Services.Interfaces;
+
 namespace InventoryApi.Services;
 
 public class ProductService : IProductService
@@ -19,8 +20,17 @@ public class ProductService : IProductService
     public async Task<IEnumerable<ProductDto>> GetProductsAsync() =>
         _mapper.Map<IEnumerable<ProductDto>>(await _repository.GetAllAsync());
 
-    public async Task<ProductDto> GetProductByIdAsync(Guid id) =>
-        _mapper.Map<ProductDto>(await _repository.GetByIdAsync(id));
+    public async Task<ProductDto> GetProductByIdAsync(Guid id)
+    {
+        var product = await _repository.GetByIdWithBatchesAsync(id);
+        if (product == null)
+            return null!;
+
+        var productDto = _mapper.Map<ProductDto>(product);
+        productDto.TotalStock = product.Batches.Sum(b => b.Stock);
+
+        return productDto;
+    }
 
     public async Task AddProductAsync(CreateProductDto productDto)
     {
@@ -41,4 +51,10 @@ public class ProductService : IProductService
 
     public async Task<IEnumerable<ProductDto>> SearchProductsAsync(string name) =>
         _mapper.Map<IEnumerable<ProductDto>>(await _repository.SearchProductsAsync(name));
+
+    public async Task AddProductBatchAsync(BatchDto batchProduct)
+    {
+        var batch = _mapper.Map<Batch>(batchProduct);
+        await _repository.AddBatchAsync(batch);
+    }
 }

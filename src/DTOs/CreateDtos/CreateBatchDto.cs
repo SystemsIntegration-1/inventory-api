@@ -1,8 +1,7 @@
-namespace InventoryApi.Entities;
+namespace InventoryApi.Dto;
 
-public class Batch
+public class CreateBatchDto
 {
-    public Guid Id { get; set; } = Guid.NewGuid();
     public Guid ProductId { get; set; }
     public int Stock { get; set; }
     public long EntryDate { get; set; }
