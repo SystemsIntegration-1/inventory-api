@@ -25,8 +25,13 @@ public class BatchController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddBatch([FromBody] CreateBatchDto batchDto)
     {
+        if (batchDto.ProductId == Guid.Empty)
+        {
+            return BadRequest("ProductId is required");
+        }
+
         await _batchService.AddBatchAsync(batchDto);
-        return Ok();
+        return Ok(new { message = "Batch added successfully" });
     }
 
     [HttpPut("{id}")]
