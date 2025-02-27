@@ -57,4 +57,11 @@ public class ProductController : ControllerBase
         var products = await _productService.SearchProductsAsync(name);
         return Ok(products);
     }
+
+    [HttpPost("batch")]
+    public async Task<IActionResult> AddProductBatch([FromBody] BatchDto batchProducts)
+    {
+        await _productService.AddProductBatchAsync(batchProducts);
+        return Ok();
+    }
 }

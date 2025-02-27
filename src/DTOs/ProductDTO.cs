@@ -7,5 +7,6 @@ public class ProductDto
     public string Description { get; set; } = string.Empty;
     public string Category { get; set; } = string.Empty;
     public string WarehouseLocation { get; set; } = string.Empty;
-    public List<BatchDto> Batches { get; set; } = new();
+    public List<BatchDto> Batches { get; set; } = [];
+    public int TotalStock { get; set; }
 }

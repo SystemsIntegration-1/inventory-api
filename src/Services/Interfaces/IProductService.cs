@@ -1,6 +1,7 @@
 using InventoryApi.Dto;
 
 namespace InventoryApi.Services.Interfaces;
+
 public interface IProductService
 {
     Task<IEnumerable<ProductDto>> GetProductsAsync();
@@ -8,4 +9,5 @@ public interface IProductService
     Task AddProductAsync(CreateProductDto productDto);
     Task UpdateProductAsync(Guid id, CreateProductDto productDto);
     Task<IEnumerable<ProductDto>> SearchProductsAsync(string name);
+    Task AddProductBatchAsync(BatchDto batchProducts);
 }
