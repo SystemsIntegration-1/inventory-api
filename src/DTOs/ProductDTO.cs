@@ -1,12 +1,11 @@
 namespace InventoryApi.Dto;
+
 public class ProductDto
 {
     public Guid Id { get; set; }
-    public required string Name { get; set; }
-    public required string Description { get; set; }
-    public required string Category { get; set; }
-    public int AvailableQuantity { get; set; }
-    public required string WarehouseLocation { get; set; }
-    public long EntryDate { get; set; }
-    public long ExpirationDate { get; set; }
+    public string Name { get; set; } = string.Empty;
+    public string Description { get; set; } = string.Empty;
+    public string Category { get; set; } = string.Empty;
+    public string WarehouseLocation { get; set; } = string.Empty;
+    public List<BatchDto> Batches { get; set; } = new();
 }
