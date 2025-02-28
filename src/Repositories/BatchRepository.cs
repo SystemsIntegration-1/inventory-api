@@ -1,3 +1,4 @@
+using inventory_api.src.Models;
 using InventoryApi.DBContext;
 using InventoryApi.Entities;
 using InventoryApi.Repositories.Interfaces;
@@ -30,6 +31,44 @@ public class BatchRepository : IBatchRepository
     public async Task UpdateAsync(Batch batch)
     {
         _context.Batches.Update(batch);
+        await _context.SaveChangesAsync();
+    }
+
+    public async Task<IEnumerable<BatchProductPair>> GetExpiredBatchesAsync()
+    {
+        var currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+        var expiredBatches = await _context.Batches
+            .Where(b => b.ExpirationDate < currentTime && b.Stock > 0)
+            .ToListAsync();
+
+        var result = new List<BatchProductPair>();
+
+        foreach (var batch in expiredBatches)
+        {
+            var product = await _context.Products.FindAsync(batch.ProductId);
+            if (product != null)
+            {
+                result.Add(new BatchProductPair
+                {
+                    Batch = batch,
+                    Product = product
+                });
+            }
+        }
+
+        return result;
+    }
+
+    public async Task ClearExpiredBatchesAsync()
+    {
+        var currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+        var expiredBatches = await _context.Batches
+        .Where(b => b.ExpirationDate < currentTime && b.Stock > 0)
+        .ToListAsync();
+
+        _context.Batches.RemoveRange(expiredBatches);
         await _context.SaveChangesAsync();
     }
 }

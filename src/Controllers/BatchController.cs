@@ -25,8 +25,13 @@ public class BatchController : ControllerBase
     [HttpPost]
     public async Task<IActionResult> AddBatch([FromBody] CreateBatchDto batchDto)
     {
+        if (batchDto.ProductId == Guid.Empty)
+        {
+            return BadRequest("ProductId is required");
+        }
+
         await _batchService.AddBatchAsync(batchDto);
-        return Ok();
+        return Ok(new { message = "Batch added successfully" });
     }
 
     [HttpPut("{id}")]
@@ -38,5 +43,19 @@ public class BatchController : ControllerBase
 
         await _batchService.UpdateBatchAsync(id, batchDto);
         return NoContent();
+    }
+
+    [HttpGet("expired")]
+    public async Task<IActionResult> GetExpiredBatches()
+    {
+        var expiredBatches = await _batchService.GetExpiredBatchesAsync();
+        return Ok(expiredBatches);
+    }
+
+    [HttpPost("clear-expired")]
+    public async Task<IActionResult> ClearExpiredBatches()
+    {
+        await _batchService.ClearExpiredBatchesAsync();
+        return Ok(new { message = "Expired batches cleared successfully" });
     }
 }

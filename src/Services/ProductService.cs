@@ -17,8 +17,21 @@ public class ProductService : IProductService
         _mapper = mapper;
     }
 
-    public async Task<IEnumerable<ProductDto>> GetProductsAsync() =>
-        _mapper.Map<IEnumerable<ProductDto>>(await _repository.GetAllAsync());
+    public async Task<IEnumerable<ProductDto>> GetProductsAsync()
+    {
+        var products = await _repository.GetAllAsync();
+        var productDtos = new List<ProductDto>();
+
+        foreach (var product in products)
+        {
+            var productWithBatches = await _repository.GetByIdWithBatchesAsync(product.Id);
+            var productDto = _mapper.Map<ProductDto>(productWithBatches);
+            productDto.TotalStock = productWithBatches!.Batches.Sum(b => b.Stock);
+            productDtos.Add(productDto);
+        }
+
+        return productDtos;
+    }
 
     public async Task<ProductDto> GetProductByIdAsync(Guid id)
     {
@@ -35,6 +48,7 @@ public class ProductService : IProductService
     public async Task AddProductAsync(CreateProductDto productDto)
     {
         var product = _mapper.Map<Product>(productDto);
+        product.SharedId = Guid.NewGuid();
         await _repository.AddAsync(product);
     }
 
@@ -49,12 +63,19 @@ public class ProductService : IProductService
         await _repository.UpdateAsync(existingProduct);
     }
 
-    public async Task<IEnumerable<ProductDto>> SearchProductsAsync(string name) =>
-        _mapper.Map<IEnumerable<ProductDto>>(await _repository.SearchProductsAsync(name));
-
-    public async Task AddProductBatchAsync(BatchDto batchProduct)
+    public async Task<IEnumerable<ProductDto>> SearchProductsAsync(string name)
     {
-        var batch = _mapper.Map<Batch>(batchProduct);
-        await _repository.AddBatchAsync(batch);
+        var products = await _repository.SearchProductsAsync(name);
+        var productDtos = new List<ProductDto>();
+
+        foreach (var product in products)
+        {
+            var productWithBatches = await _repository.GetByIdWithBatchesAsync(product.Id);
+            var productDto = _mapper.Map<ProductDto>(productWithBatches);
+            productDto.TotalStock = productWithBatches!.Batches.Sum(b => b.Stock);
+            productDtos.Add(productDto);
+        }
+
+        return productDtos;
     }
 }
