@@ -41,15 +41,15 @@ public class BatchService(IBatchRepository batchRepository, IMapper mapper) : IB
     {
         var expiredBatchesWithProduct = await _batchRepository.GetExpiredBatchesAsync();
 
-        var expiredBatchDtos = expiredBatchesWithProduct.Select(bp => new ExpiredBatchDto
+        var expiredBatchDtos = expiredBatchesWithProduct.Select(batchProductPair => new ExpiredBatchDto
         {
-            BatchId = bp.Item1.Id,
-            ProductId = bp.Item1.ProductId,
-            ProductName = bp.Item2.Name,
-            ProductCategory = bp.Item2.Category,
-            Stock = bp.Item1.Stock,
-            EntryDate = bp.Item1.EntryDate,
-            ExpirationDate = bp.Item1.ExpirationDate
+            BatchId = batchProductPair.Batch.Id,
+            ProductId = batchProductPair.Batch.ProductId,
+            ProductName = batchProductPair.Product.Name,
+            ProductCategory = batchProductPair.Product.Category,
+            Stock = batchProductPair.Batch.Stock,
+            EntryDate = batchProductPair.Batch.EntryDate,
+            ExpirationDate = batchProductPair.Batch.ExpirationDate
         }).ToList();
 
         return expiredBatchDtos;
