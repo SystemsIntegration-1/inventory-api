@@ -26,7 +26,11 @@ public class ProductService : IProductService
         {
             var productWithBatches = await _repository.GetByIdWithBatchesAsync(product.Id);
             var productDto = _mapper.Map<ProductDto>(productWithBatches);
-            productDto.TotalStock = productWithBatches!.Batches.Sum(b => b.Stock);
+            var currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+            
+            productDto.TotalStock = productWithBatches!.Batches
+            .Where(b => b.ExpirationDate >= currentTime)
+            .Sum(b => b.Stock);
             productDtos.Add(productDto);
         }
 
@@ -40,7 +44,10 @@ public class ProductService : IProductService
             return null!;
 
         var productDto = _mapper.Map<ProductDto>(product);
-        productDto.TotalStock = product.Batches.Sum(b => b.Stock);
+        var currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        productDto.TotalStock = product.Batches
+        .Where(b => b.ExpirationDate >= currentTime)
+        .Sum(b => b.Stock);
 
         return productDto;
     }
@@ -72,7 +79,11 @@ public class ProductService : IProductService
         {
             var productWithBatches = await _repository.GetByIdWithBatchesAsync(product.Id);
             var productDto = _mapper.Map<ProductDto>(productWithBatches);
-            productDto.TotalStock = productWithBatches!.Batches.Sum(b => b.Stock);
+            var currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+        
+            productDto.TotalStock = productWithBatches!.Batches
+            .Where(b => b.ExpirationDate >= currentTime)
+            .Sum(b => b.Stock);
             productDtos.Add(productDto);
         }
 

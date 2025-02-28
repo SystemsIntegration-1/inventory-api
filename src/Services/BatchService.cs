@@ -23,6 +23,9 @@ public class BatchService(IBatchRepository batchRepository, IMapper mapper) : IB
 
     public async Task AddBatchAsync(CreateBatchDto batchDto)
     {
+        if (batchDto.Stock <= 0)
+            throw new ArgumentException("Batch stock cannot be 0");
+
         var batch = _mapper.Map<Batch>(batchDto);
         await _batchRepository.AddAsync(batch);
     }

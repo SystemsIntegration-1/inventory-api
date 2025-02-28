@@ -19,8 +19,14 @@ public class BatchRepository : IBatchRepository
 
     public async Task<Batch?> GetByIdAsync(Guid id) => await _context.Batches.FindAsync(id);
 
-    public async Task<IEnumerable<Batch>> GetByProductIdAsync(Guid productId) =>
-        await _context.Batches.Where(b => b.ProductId == productId).ToListAsync();
+    public async Task<IEnumerable<Batch>> GetByProductIdAsync(Guid productId)
+    {
+        var currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
+
+        return await _context.Batches
+            .Where(b => b.ProductId == productId && b.ExpirationDate >= currentTime)
+            .ToListAsync();
+    }
 
     public async Task AddAsync(Batch batch)
     {
