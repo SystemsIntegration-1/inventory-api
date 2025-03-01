@@ -21,16 +21,19 @@ public class ProductService : IProductService
     {
         var products = await _repository.GetAllAsync();
         var productDtos = new List<ProductDto>();
+        var currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
         foreach (var product in products)
         {
             var productWithBatches = await _repository.GetByIdWithBatchesAsync(product.Id);
             var productDto = _mapper.Map<ProductDto>(productWithBatches);
-            var currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-            
-            productDto.TotalStock = productWithBatches!.Batches
-            .Where(b => b.ExpirationDate >= currentTime)
-            .Sum(b => b.Stock);
+
+            productDto.Batches = productWithBatches!.Batches
+                .Where(b => b.ExpirationDate >= currentTime)
+                .Select(_mapper.Map<BatchDto>)
+                .ToList();
+
+            productDto.TotalStock = productDto.Batches.Sum(b => b.Stock);
             productDtos.Add(productDto);
         }
 
@@ -45,9 +48,13 @@ public class ProductService : IProductService
 
         var productDto = _mapper.Map<ProductDto>(product);
         var currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        productDto.TotalStock = product.Batches
-        .Where(b => b.ExpirationDate >= currentTime)
-        .Sum(b => b.Stock);
+
+        productDto.Batches = product.Batches
+            .Where(b => b.ExpirationDate >= currentTime)
+            .Select(_mapper.Map<BatchDto>)
+            .ToList();
+
+        productDto.TotalStock = productDto.Batches.Sum(b => b.Stock);
 
         return productDto;
     }
@@ -74,16 +81,19 @@ public class ProductService : IProductService
     {
         var products = await _repository.SearchProductsAsync(name);
         var productDtos = new List<ProductDto>();
+        var currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
 
         foreach (var product in products)
         {
             var productWithBatches = await _repository.GetByIdWithBatchesAsync(product.Id);
             var productDto = _mapper.Map<ProductDto>(productWithBatches);
-            var currentTime = DateTimeOffset.UtcNow.ToUnixTimeMilliseconds();
-        
-            productDto.TotalStock = productWithBatches!.Batches
-            .Where(b => b.ExpirationDate >= currentTime)
-            .Sum(b => b.Stock);
+
+            productDto.Batches = productWithBatches!.Batches
+                .Where(b => b.ExpirationDate >= currentTime)
+                .Select(_mapper.Map<BatchDto>)
+                .ToList();
+
+            productDto.TotalStock = productDto.Batches.Sum(b => b.Stock);
             productDtos.Add(productDto);
         }
 

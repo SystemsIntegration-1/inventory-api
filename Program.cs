@@ -1,3 +1,4 @@
+using inventory_api.src.Validators;
 using InventoryApi.Config;
 using InventoryApi.DBContext;
 using InventoryApi.Repositories;
@@ -19,6 +20,8 @@ builder.Services.AddDbContext<InventoryDbContext>(options =>
 builder.Services.AddScoped<IProductRepository, ProductRepository>();
 builder.Services.AddScoped<IInventoryRepository, InventoryRepository>();
 builder.Services.AddScoped<IBatchRepository, BatchRepository>();
+
+builder.Services.AddValidations();
 
 builder.Services.AddScoped<IProductService, ProductService>();
 builder.Services.AddScoped<IInventoryService, InventoryService>();

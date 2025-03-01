@@ -28,16 +28,6 @@ public class InventoryService : IInventoryService
     {
         NormalizeMovementData(movementDto);
 
-        var validationResult = ValidateMovement(movementDto);
-        if (!validationResult.IsValid)
-        {
-            return new InventoryMovementResponseDto
-            {
-                Success = false,
-                Message = validationResult.ErrorMessage
-            };
-        }
-
         return await ProcessOutgoingMovementAsync(movementDto);
     }
 
@@ -61,34 +51,6 @@ public class InventoryService : IInventoryService
         }
 
         movementDto.MovementType = movementDto.MovementType.ToLower();
-    }
-
-    private ValidationResult ValidateMovement(InventoryMovementDto movementDto)
-    {
-        var result = new ValidationResult { IsValid = true };
-
-        if (movementDto.MovementType != "outgoing")
-        {
-            result.IsValid = false;
-            result.ErrorMessage = "MovementType must be 'outgoing'";
-            return result;
-        }
-
-        if (movementDto.Quantity <= 0)
-        {
-            result.IsValid = false;
-            result.ErrorMessage = "Quantity must be greater than zero";
-            return result;
-        }
-
-        if (movementDto.ProductId == Guid.Empty)
-        {
-            result.IsValid = false;
-            result.ErrorMessage = "ProductId is required";
-            return result;
-        }
-
-        return result;
     }
 
     private async Task<InventoryMovementResponseDto> ProcessOutgoingMovementAsync(InventoryMovementDto movementDto)
