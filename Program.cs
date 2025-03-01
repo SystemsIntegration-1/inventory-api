@@ -1,10 +1,10 @@
 using inventory_api.src.Validators;
+using InventoryApi.Aplication.Services;
+using InventoryApi.Aplication.Services.Interfaces;
 using InventoryApi.Config;
-using InventoryApi.DBContext;
-using InventoryApi.Repositories;
-using InventoryApi.Repositories.Interfaces;
-using InventoryApi.Services;
-using InventoryApi.Services.Interfaces;
+using InventoryApi.Infrastructure.DBContext;
+using InventoryApi.Infrastructure.Repositories;
+using InventoryApi.Infrastructure.Repositories.Interfaces;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);

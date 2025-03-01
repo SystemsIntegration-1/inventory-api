@@ -1,5 +1,5 @@
 using FluentValidation;
-using InventoryApi.Dto;
+using InventoryApi.API.Dto;
 
 namespace inventory_api.src.Validators;
 

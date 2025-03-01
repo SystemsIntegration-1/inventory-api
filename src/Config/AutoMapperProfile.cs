@@ -1,6 +1,7 @@
 using AutoMapper;
-using InventoryApi.Dto;
-using InventoryApi.Entities;
+using InventoryApi.API.Dto;
+using InventoryApi.Aplication.Dto;
+using InventoryApi.Domain.Entities;
 
 namespace InventoryApi.Config;
 
