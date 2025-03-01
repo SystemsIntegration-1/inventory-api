@@ -8,19 +8,29 @@ public class InventoryMovementDtoValidator : AbstractValidator<InventoryMovement
     public InventoryMovementDtoValidator()
     {
         RuleFor(x => x.ProductId)
-            .NotEqual(Guid.Empty).WithMessage("ProductId is required");
+            .NotEqual(Guid.Empty).WithMessage("Product ID is required");
 
         RuleFor(x => x.MovementType)
             .NotEmpty().WithMessage("Movement type is required")
-            .Must(x => x.ToLower() == "outgoing").WithMessage("Only outgoing movements are supported");
+            .Must(BeValidMovementType).WithMessage("Movement type must be 'outgoing'");
 
         RuleFor(x => x.Quantity)
             .GreaterThan(0).WithMessage("Quantity must be greater than 0");
 
         RuleFor(x => x.Origin)
-            .NotEmpty().WithMessage("Origin is required");
+            .NotEmpty().WithMessage("Origin is required")
+            .MaximumLength(100).WithMessage("Origin must not exceed 100 characters");
 
         RuleFor(x => x.Destination)
-            .NotEmpty().WithMessage("Destination is required");
+            .NotEmpty().WithMessage("Destination is required")
+            .MaximumLength(100).WithMessage("Destination must not exceed 100 characters");
+
+        RuleFor(x => x.MovementDate)
+            .GreaterThanOrEqualTo(0).WithMessage("Movement date cannot be negative");
+    }
+
+    private bool BeValidMovementType(string movementType)
+    {
+        return movementType.ToLower() == "outgoing";
     }
 }
