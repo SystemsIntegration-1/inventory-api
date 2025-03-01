@@ -1,6 +1,7 @@
 using FluentValidation;
 using FluentValidation.AspNetCore;
-using InventoryApi.Dto;
+using InventoryApi.API.Dto;
+using InventoryApi.Aplication.Dto;
 
 namespace inventory_api.src.Validators;
 
